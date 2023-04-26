@@ -1,3 +1,14 @@
+const getCategories = () => {
+    axios.get('https://dummyjson.com/products/categories')
+        .then(response => {
+            console.log(response);
+            renderCategories(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+}
+
 const loadAllItems = () => {
     axios.get('https://dummyjson.com/products')
         .then(response => {
@@ -27,20 +38,32 @@ searchBtn.onclick = (e) => {
         })
 }
 
+const getByCategory = (cat) => {
+    axios.get(`https://dummyjson.com/products/category/${cat}`)
+        .then(response => {
+            console.log(response);
+            renderCatalog(response.data.products);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    
+}
+
 const renderCatalog = (content) => {
     const catalog = document.getElementById("catalog");
-
+    catalog.innerHTML = "";
     content.forEach(item => {
         const card = document.createElement("div");
         card.classList.add("col-md-2");
         card.innerHTML = `<div class="card h-100" style="">
-        <img src="${item.thumbnail}" class="card-img-top" alt="No Image Available">
-        <div class="card-body">
-        <h5 class="card-title">${item.title}</h5>
+            <img src="${item.thumbnail}" class="card-img-top" alt="No Image Available">
+            <div class="card-body">
+            <h5 class="card-title">${item.title}</h5>
         <p class="card-text">${item.rating}/5 ⭐</p>
         </div>
         <div class="card-footer">
-        <a href="#" class="btn btn-primary">Show details</a>
+        <a href="/listing?id=${item.id}" class="btn btn-primary">Mostrar detalles</a>
         </div>
         </div>`;
 
@@ -48,4 +71,12 @@ const renderCatalog = (content) => {
     });
 }
 
-loadAllItems();
+const renderCategories = (cats) => {
+    const catList = document.getElementById("catList");
+    catList.innerHTML = "";
+    cats.forEach(cat => {
+        const catLi = document.createElement("li");
+        catLi.innerHTML = `<a class="dropdown-item" onclick="getByCategory('${cat}')">${cat}</a>`
+        catList.appendChild(catLi);
+    });
+}
