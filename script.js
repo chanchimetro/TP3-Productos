@@ -9,6 +9,20 @@ const getCategories = () => {
         })
 }
 
+const getItemInfo = () => {
+    const url = new URL(window.location.href);
+    const searchParams = url.searchParams;
+    itemId = searchParams.get('id');
+    axios.get(`https://dummyjson.com/products/${itemId}`)
+        .then(response => {
+            console.log(response);
+            renderCatalog(response.data.products);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+}
+
 const loadAllItems = () => {
     axios.get('https://dummyjson.com/products')
         .then(response => {
@@ -63,7 +77,7 @@ const renderCatalog = (content) => {
         <p class="card-text">${item.rating}/5 ⭐</p>
         </div>
         <div class="card-footer">
-        <a href="/listing?id=${item.id}" class="btn btn-primary">Mostrar detalles</a>
+        <a href="./listing.html?id=${item.id}" class="btn btn-primary">Mostrar detalles</a>
         </div>
         </div>`;
 
