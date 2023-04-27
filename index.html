@@ -37,9 +37,15 @@
     </div>
   </nav>
 
-  <p class="px-5 mt-5 fw-bold h5">Mostrando <span id="productQ"></span> item(s)</p>
-
-  <div class="container-fluid px-5 mb-5 mt-3">
+  
+  <div class="container-fluid px-5 my-5">
+    <div class="fw-bold h5">
+      Mostrando <span id="productQ"></span> item(s) [<span id="catalogScope"></span>]
+      <div class="float-end" id="pagControls">
+        <button type="button" onclick="skipProducts(-30)" class="btn btn-link text-decoration-none"><</button>
+        <button type="button" onclick="skipProducts(30)" class="btn btn-link text-decoration-none">></button>
+      </div>
+    </div>
     <div id="catalog" class="row row-cols-1 row-cols-md-3 g-4 d-flex justify-content-center"></div>
   </div>
 

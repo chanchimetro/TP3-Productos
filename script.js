@@ -11,6 +11,24 @@ const getCategories = () => {
         })
 }
 
+const skipProducts = (i) => {
+    axios.get('https://dummyjson.com/products', {
+        params: {
+            limit: 0
+        }
+    })
+        .then(response => {
+            if (itemSkip + i <= response.data.total && itemSkip + i >=0){
+                itemSkip += i;
+                loadAllItems();
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    
+}
+
 const getItemInfo = () => {
     const url = new URL(window.location.href);
     const searchParams = url.searchParams;
@@ -33,7 +51,7 @@ const loadAllItems = () => {
     })
         .then(response => {
             console.log(response);
-            renderCatalog(response.data.products);
+            renderCatalog(response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -51,7 +69,7 @@ searchBtn.onclick = (e) => {
     })
         .then(function (response) {
             console.log(response);
-            renderCatalog(response.data.products);
+            renderCatalog(response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -62,7 +80,7 @@ const getByCategory = (cat) => {
     axios.get(`https://dummyjson.com/products/category/${cat}`)
         .then(response => {
             console.log(response);
-            renderCatalog(response.data.products);
+            renderCatalog(response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -73,9 +91,12 @@ const getByCategory = (cat) => {
 const renderCatalog = (content) => {
     const catalog = document.getElementById("catalog");
     const productQ = document.getElementById("productQ");
+    const catalogScope = document.getElementById("catalogScope");
     catalog.innerHTML = "";
-    productQ.innerHTML = content.length;
-    content.forEach(item => {
+    productQ.innerHTML = content.products.length;
+    catalogScope.innerHTML = `${content.skip} - ${content.total}`;
+
+    content.products.forEach(item => {
         const card = document.createElement("div");
         card.classList.add("col-md-2");
         card.innerHTML = `<div class="card h-100" style="">
@@ -85,7 +106,7 @@ const renderCatalog = (content) => {
         <p class="card-text">${item.rating}/5 ⭐</p>
         </div>
         <div class="card-footer">
-        <a href="./listing.html?id=${item.id}" class="btn btn-primary">Mostrar detalles</a>
+        <a href="./listing.html?id=${item.id}" class="btn btn-primary">Ver producto</a>
         </div>
         </div>`;
 
@@ -98,7 +119,7 @@ const renderCategories = (cats) => {
     catList.innerHTML = "";
     cats.forEach(cat => {
         const catLi = document.createElement("li");
-        catLi.innerHTML = `<a class="dropdown-item" onclick="getByCategory('${cat}')">${cat}</a>`
+        catLi.innerHTML = `<a class="dropdown-item text-capitalize" onclick="getByCategory('${cat}')">${cat}</a>`
         catList.appendChild(catLi);
     });
 }
@@ -109,6 +130,7 @@ const renderListing = (product) => {
     const title = document.getElementById("productTitle");
     const desc = document.getElementById("productDesc");
     const price = document.getElementById("productPrice");
+    const rating = document.getElementById("productRating");
 
     product.images.forEach(img => {
         console.log(img);
@@ -121,5 +143,6 @@ const renderListing = (product) => {
     brandCat.innerHTML = `${product.category} - ${product.brand}`;
     title.innerHTML = `${product.title}`;
     desc.innerHTML = `${product.description}`;
-    price.innerHTML = `$ ${product.price}`;
+    price.innerHTML = `$ ${product.price} <span class="text-muted h6">-%${product.discountPercentage} OFF</span>`;
+    rating.innerHTML = `${product.rating} ⭐`
 }
